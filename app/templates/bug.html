@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                训练模型
+                <span style="float:right;color:green">{{ msg }}</span>
+            </div>
+            <form action="/bug/list/" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="csv1">
+                <input type="submit" class="btn-primary" value="上传">
+            </form>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                故障检测
+            </div>
+            <form method="POST" action="/bug/list/" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="csv">
+                <input type="submit" class="btn-primary" value="上传">
+            </form>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                检测结果
+                {% if predict_accuracy %}
+                <span style="float:right;">
+                    <button class="btn btn-success">
+                        <a style="color:white;" href="/bug/download/">下载预测结果</a>
+                    </button>
+                </span>
+                {% endif %}
+            </div>
+            预测准确率:{{ predict_accuracy }}
+            <br>
+            macro_f1得分:{{ macro_f1 }}
+            <br>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>样本id</th>
+                        <th>故障类型</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in queryset %}
+                    <tr>
+                        <th>{{ i.sample_id }}</th>
+                        <td>{{ i.label }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <ul class="pagination">
+                {{ page_string }}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        
+    </script>
+{% endblock %}

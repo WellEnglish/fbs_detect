@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">折线图</div>
+            <div class="panel-body">
+              <div id="m1" style="width:100%;height:430px;"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/echarts.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            initLine();
+        })
+        
+        function initLine(){
+            var myChart = echarts.init(document.getElementById("m1"))
+            var option = {
+                title: {
+                  text: '近六次测试的macro_f1得分',
+                  left: 'center'
+                },
+                tooltip: {
+                  trigger: 'axis'
+                },
+                legend: {
+                  data: [],
+                  bottom:0
+                },
+                toolbox: {
+                  feature: {
+                    saveAsImage: {}
+                  }
+                },
+                xAxis: {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: []
+                },
+                yAxis: {
+                  type: 'value'
+                },
+                series: []
+            };
+            
+            $.ajax({
+                url:"/chart/line/",
+                type:"get",
+                dataType:"JSON",
+                success:function(res){
+                    if(res.status){
+                        option.legend.data = res.data.legend
+                        option.xAxis.data = res.data.x_axis
+                        option.series = res.data.series
+                        myChart.setOption(option);
+                    }
+                }
+            })
+        }
+        
+    </script>
+{% endblock %}
